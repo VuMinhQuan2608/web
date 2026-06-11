@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodHub – Tinh Hoa Ẩm Thực Việt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --amber:   #E8870A;
+            --amber-l: #F5A623;
+            --cream:   #FDF6EC;
+            --red:     #C0392B;
+            --dark:    #1A1008;
+            --bark:    #3D2B1F;
+            --text:    #2C1A0E;
+            --muted:   #7B5E4A;
+            --card-bg: #FFFFFF;
+            --shadow:  0 8px 32px rgba(62,28,10,.13);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: var(--dark) !important;
+            padding: 0.75rem 0;
+            border-bottom: 3px solid var(--amber);
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--amber) !important;
+            letter-spacing: -0.5px;
+        }
+        .navbar-brand span { color: #fff; }
+        .nav-link { color: #ccc !important; font-weight: 500; font-size: .9rem; letter-spacing: .3px; transition: color .2s; }
+        .nav-link:hover { color: var(--amber-l) !important; }
+        .btn-cart {
+            background: var(--amber);
+            border: none;
+            border-radius: 50px;
+            padding: .45rem 1rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex; align-items: center; gap: 6px;
+            transition: background .2s, transform .15s;
+        }
+        .btn-cart:hover { background: var(--amber-l); transform: scale(1.05); }
+        .btn-login {
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,.3);
+            color: #fff;
+            border-radius: 50px;
+            padding: .4rem 1rem;
+            font-size: .85rem;
+            transition: all .2s;
+        }
+        .btn-login:hover { border-color: var(--amber); color: var(--amber); }
+        #cartCount {
+            background: var(--red);
+            color: #fff;
+            border-radius: 50px;
+            font-size: .7rem;
+            padding: 1px 6px;
+            font-weight: 700;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            min-height: 480px;
+            display: flex; align-items: center;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--bark) 60%, #6B3A1F 100%);
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: url('https://images.unsplash.com/photo-1555126634-323283e090fa?w=1400') center/cover no-repeat;
+            opacity: .18;
+        }
+        .hero-deco {
+            position: absolute;
+            right: -60px; top: -60px;
+            width: 460px; height: 460px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(232,135,10,.25) 0%, transparent 70%);
+        }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-eyebrow {
+            display: inline-block;
+            background: var(--amber);
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: .8rem;
+        }
+        .hero h1 em { color: var(--amber-l); font-style: normal; }
+        .hero p { color: rgba(255,255,255,.7); font-size: 1.05rem; max-width: 480px; }
+        .hero-stats {
+            display: flex; gap: 2rem;
+            margin-top: 1.8rem;
+        }
+        .hero-stat { text-align: center; }
+        .hero-stat .num { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--amber-l); font-weight: 900; }
+        .hero-stat .lbl { font-size: .72rem; color: rgba(255,255,255,.55); letter-spacing: 1px; text-transform: uppercase; }
+
+        /* ── CATEGORY TABS ── */
+        .category-bar {
+            background: var(--dark);
+            padding: .6rem 0;
+            position: sticky; top: 62px; z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+        }
+        .cat-tabs {
+            display: flex; gap: .5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 0 1rem;
+        }
+        .cat-tabs::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            flex-shrink: 0;
+            background: rgba(255,255,255,.07);
+            border: 1.5px solid transparent;
+            color: rgba(255,255,255,.65);
+            border-radius: 50px;
+            padding: .38rem .95rem;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            white-space: nowrap;
+        }
+        .cat-btn:hover, .cat-btn.active {
+            background: var(--amber);
+            border-color: var(--amber);
+            color: #fff;
+        }
+
+        /* ── SECTION ── */
+        .menu-section { padding: 4rem 0 2rem; }
+        .section-header {
+            display: flex; align-items: baseline; gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.65rem;
+            font-weight: 900;
+            color: var(--text);
+        }
+        .section-line {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--amber) 0%, transparent 100%);
+            border-radius: 2px;
+        }
+
+        /* ── DISH CARD ── */
+        .dish-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform .25s, box-shadow .25s;
+            display: flex; flex-direction: column;
+            border: none;
+        }
+        .dish-card:hover { transform: translateY(-6px); box-shadow: 0 18px 48px rgba(62,28,10,.18); }
+        .dish-img-wrap {
+            position: relative;
+            overflow: hidden;
+            height: 190px;
+        }
+        .dish-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform .4s;
+        }
+        .dish-card:hover .dish-img-wrap img { transform: scale(1.06); }
+        .dish-badge {
+            position: absolute; top: 10px; left: 10px;
+            background: var(--red);
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            padding: 3px 9px;
+            border-radius: 4px;
+        }
+        .dish-body {
+            padding: 1rem 1.1rem 1.1rem;
+            flex: 1;
+            display: flex; flex-direction: column;
+        }
+        .dish-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: .3rem;
+            line-height: 1.3;
+        }
+        .dish-desc {
+            font-size: .8rem;
+            color: var(--muted);
+            line-height: 1.5;
+            flex: 1;
+            margin-bottom: .8rem;
+        }
+        .dish-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dish-price {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--amber);
+        }
+        .dish-price small { font-size: .65rem; color: var(--muted); font-weight: 400; }
+        .btn-add {
+            background: var(--dark);
+            border: none;
+            color: #fff;
+            border-radius: 50px;
+            padding: .38rem .9rem;
+            font-size: .82rem;
+            font-weight: 600;
+            display: flex; align-items: center; gap: 5px;
+            transition: background .2s, transform .15s;
+        }
+        .btn-add:hover { background: var(--amber); transform: scale(1.05); }
+        .dish-rating {
+            position: absolute; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,.62);
+            color: #fff;
+            font-size: .72rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .dish-rating i { color: #FFCA28; font-size: .65rem; }
+
+        /* ── CART SIDEBAR ── */
+        .cart-sidebar {
+            position: fixed;
+            top: 0; right: -420px;
+            width: 400px;
+            max-width: 100vw;
+            height: 100%;
+            background: #fff;
+            box-shadow: -6px 0 40px rgba(0,0,0,.18);
+            transition: right .3s cubic-bezier(.4,0,.2,1);
+            z-index: 1200;
+            display: flex; flex-direction: column;
+        }
+        .cart-sidebar.show { right: 0; }
+        .cart-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.45);
+            z-index: 1199;
+            display: none;
+        }
+        .cart-overlay.show { display: block; }
+        .cart-head {
+            background: var(--dark);
+            color: #fff;
+            padding: 1.1rem 1.4rem;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .cart-head h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--amber-l);
+        }
+        .btn-close-cart {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,.7);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color .2s;
+        }
+        .btn-close-cart:hover { color: #fff; }
+        .cart-body { flex: 1; overflow-y: auto; padding: 1rem 1.2rem; }
+        .cart-item {
+            display: flex; align-items: center; gap: .75rem;
+            padding: .75rem 0;
+            border-bottom: 1px solid #f0e8e0;
+        }
+        .cart-item img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+        .cart-item-name { font-size: .88rem; font-weight: 600; color: var(--text); }
+        .cart-item-price { font-size: .8rem; color: var(--amber); font-weight: 600; }
+        .qty-ctrl { display: flex; align-items: center; gap: 6px; }
+        .qty-btn {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: 1.5px solid #ddd;
+            background: #f8f4f0;
+            font-size: .85rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .15s;
+        }
+        .qty-btn:hover { border-color: var(--amber); background: var(--amber); color: #fff; }
+        .qty-num { font-size: .88rem; font-weight: 700; min-width: 18px; text-align: center; }
+        .cart-foot {
+            padding: 1rem 1.2rem 1.4rem;
+            border-top: 2px solid #f0e8e0;
+            flex-shrink: 0;
+            background: #fff;
+        }
+        .cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .9rem; }
+        .cart-total-label { font-size: .88rem; color: var(--muted); }
+        .cart-total-val { font-size: 1.4rem; font-family: 'Playfair Display', serif; font-weight: 700; color: var(--amber); }
+        .btn-checkout {
+            width: 100%;
+            background: var(--amber);
+            border: none;
+            color: #fff;
+            padding: .85rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: .5px;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+        }
+        .btn-checkout:hover { background: var(--red); transform: scale(1.01); }
+
+        /* ── MODALS ── */
+        .modal-content { border: none; border-radius: 16px; overflow: hidden; }
+        .modal-header-custom {
+            background: var(--dark);
+            color: #fff;
+            padding: 1.1rem 1.4rem;
+            border-bottom: 3px solid var(--amber);
+        }
+        .modal-header-custom h5 { font-family: 'Playfair Display', serif; color: var(--amber-l); margin: 0; }
+        .nav-pills .nav-link {
+            border-radius: 50px !important;
+            font-weight: 600;
+            font-size: .88rem;
+            color: var(--muted);
+        }
+        .nav-pills .nav-link.active { background: var(--amber) !important; color: #fff; }
+        .form-control {
+            border-radius: 10px;
+            border-color: #e0d4c8;
+            font-size: .88rem;
+            padding: .55rem .85rem;
+        }
+        .form-control:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(232,135,10,.15); }
+        .form-label { font-size: .8rem; font-weight: 600; color: var(--muted); margin-bottom: .3rem; }
+        .btn-primary-custom {
+            background: var(--amber);
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            padding: .65rem;
+            font-weight: 700;
+            width: 100%;
+            transition: background .2s;
+        }
+        .btn-primary-custom:hover { background: var(--red); }
+        .btn-success-custom {
+            background: #2E7D32;
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            padding: .65rem;
+            font-weight: 700;
+            width: 100%;
+            transition: background .2s;
+        }
+        .btn-success-custom:hover { background: #1B5E20; }
+
+        /* Status badge */
+        .status-badge { font-size: .75rem; padding: 4px 11px; border-radius: 20px; font-weight: 600; }
+
+        /* Order card */
+        .order-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 3px 14px rgba(62,28,10,.08);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .order-card-head {
+            background: #FDF6EC;
+            padding: .75rem 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #f0e8e0;
+        }
+
+        /* Toast */
+        .toast-wrap { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 9999; }
+        .toast-msg {
+            background: var(--dark);
+            color: #fff;
+            border-radius: 50px;
+            padding: .6rem 1.4rem;
+            font-size: .88rem;
+            font-weight: 600;
+            box-shadow: 0 6px 24px rgba(0,0,0,.25);
+            display: flex; align-items: center; gap: 8px;
+            animation: toastIn .3s ease;
+            pointer-events: none;
+        }
+        .toast-msg.success i { color: #4CAF50; }
+        .toast-msg.danger i { color: var(--red); }
+        .toast-msg.warning i { color: var(--amber-l); }
+        @keyframes toastIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--dark);
+            color: rgba(255,255,255,.5);
+            padding: 2.5rem 0 1.5rem;
+            margin-top: 4rem;
+            border-top: 3px solid var(--amber);
+        }
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--amber);
+        }
+        .footer-links a { color: rgba(255,255,255,.45); text-decoration: none; font-size: .82rem; margin: 0 .5rem; }
+        .footer-links a:hover { color: var(--amber-l); }
+
+        /* ── MISC ── */
+        .hidden { display: none !important; }
+        .section-hidden { display: none; }
+        .empty-cart-msg { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+        .empty-cart-msg i { font-size: 2.5rem; margin-bottom: .8rem; opacity: .3; display: block; }
+        .user-pill {
+            background: rgba(232,135,10,.15);
+            border: 1.5px solid var(--amber);
+            color: var(--amber);
+            border-radius: 50px;
+            padding: .3rem .9rem;
+            font-size: .82rem;
+            font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-logout {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,.5);
+            font-size: .8rem;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        .btn-logout:hover { color: var(--red); }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="#">🍜 Food<span>Hub</span></a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+            <ul class="navbar-nav me-auto ms-3 gap-1">
+                <li class="nav-item"><a class="nav-link" href="#">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="#menu">Thực đơn</a></li>
+                <li class="nav-item"><a class="nav-link" href="javascript:void(0)" onclick="openOrderTracking()">Đơn hàng</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <div id="userInfo" class="hidden d-flex align-items-center gap-2">
+                    <div class="user-pill"><i class="fas fa-user-circle"></i><span id="userName">User</span></div>
+                    <button class="btn-logout" onclick="logout()" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                <button id="loginBtn" class="btn-login" data-bs-toggle="modal" data-bs-target="#authModal">
+                    <i class="fas fa-sign-in-alt me-1"></i> Đăng nhập
+                </button>
+                <button class="btn-cart" id="cartBtn">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span id="cartCount">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-deco"></div>
+    <div class="container hero-content py-5">
+        <span class="hero-eyebrow">✦ Giao hàng trong 30 phút</span>
+        <h1>Tinh Hoa<br><em>Ẩm Thực Việt</em></h1>
+        <p>Hương vị đậm đà từ mọi miền đất nước — đặt hàng ngay, giao tận cửa.</p>
+        <div class="hero-stats">
+            <div class="hero-stat"><div class="num">80+</div><div class="lbl">Món ăn</div></div>
+            <div class="hero-stat"><div class="num">4.9★</div><div class="lbl">Đánh giá</div></div>
+            <div class="hero-stat"><div class="num">30'</div><div class="lbl">Giao hàng</div></div>
+        </div>
+        <div class="mt-4">
+            <a href="#menu" class="btn-checkout" style="display:inline-block;width:auto;padding:.65rem 1.6rem;border-radius:50px;text-decoration:none">Xem thực đơn <i class="fas fa-arrow-down ms-1"></i></a>
+        </div>
+    </div>
+</header>
+
+<!-- CATEGORY TABS -->
+<div class="category-bar" id="menu">
+    <div class="container">
+        <div class="cat-tabs">
+            <button class="cat-btn active" onclick="filterCat('all', this)">🍽️ Tất cả</button>
+            <button class="cat-btn" onclick="filterCat('pho-bun', this)">🍜 Phở & Bún</button>
+            <button class="cat-btn" onclick="filterCat('com', this)">🍚 Cơm</button>
+            <button class="cat-btn" onclick="filterCat('banh', this)">🥖 Bánh</button>
+            <button class="cat-btn" onclick="filterCat('cuon-goi', this)">🥗 Cuốn & Gỏi</button>
+            <button class="cat-btn" onclick="filterCat('lau-nuong', this)">🔥 Nướng & Lẩu</button>
+            <button class="cat-btn" onclick="filterCat('do-uong', this)">🧋 Đồ uống</button>
+            <button class="cat-btn" onclick="filterCat('trang-mieng', this)">🍮 Tráng miệng</button>
+        </div>
+    </div>
+</div>
+
+<!-- MENU -->
+<section class="menu-section">
+    <div class="container">
+        <div id="menuContainer"></div>
+    </div>
+</section>
+
+<!-- OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART SIDEBAR -->
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-head">
+        <h4><i class="fas fa-shopping-basket me-2"></i>Giỏ hàng</h4>
+        <button class="btn-close-cart" onclick="closeCart()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-body" id="cartItems"></div>
+    <div class="cart-foot">
+        <div class="cart-total-row">
+            <span class="cart-total-label">Tổng thanh toán</span>
+            <span class="cart-total-val" id="cartTotal">0 đ</span>
+        </div>
+        <button class="btn-checkout" id="checkoutBtn">ĐẶT HÀNG NGAY →</button>
+    </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal fade" id="authModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header-custom">
+                <h5>🔐 Tài khoản của bạn</h5>
+            </div>
+            <div class="p-4">
+                <ul class="nav nav-pills mb-3 gap-2" id="pills-tab">
+                    <li class="nav-item flex-fill"><button class="nav-link active w-100" data-bs-toggle="pill" data-bs-target="#tab-login">Đăng nhập</button></li>
+                    <li class="nav-item flex-fill"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-register">Đăng ký</button></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-login">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label class="form-label">Email / Số điện thoại</label>
+                                <input type="text" id="loginId" class="form-control" placeholder="Nhập email hoặc SĐT" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mật khẩu</label>
+                                <input type="password" id="loginPass" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn-primary-custom">Vào cửa hàng →</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="tab-register">
+                        <form id="registerForm">
+                            <div class="mb-3"><label class="form-label">Họ tên</label><input type="text" id="regName" class="form-control" required></div>
+                            <div class="mb-3"><label class="form-label">Email</label><input type="email" id="regEmail" class="form-control" required></div>
+                            <div class="mb-3"><label class="form-label">Số điện thoại</label><input type="tel" id="regPhone" class="form-control" required></div>
+                            <div class="mb-3"><label class="form-label">Mật khẩu</label><input type="password" id="regPass" class="form-control" required></div>
+                            <button type="submit" class="btn-success-custom">Tạo tài khoản ✓</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ORDER TRACKING MODAL -->
+<div class="modal fade" id="trackingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-box me-2"></i>Đơn hàng của bạn</h5>
+                <button type="button" class="btn-logout" data-bs-dismiss="modal" style="color:rgba(255,255,255,.7);font-size:1.1rem"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body p-4" id="orderHistory"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ORDER FORM MODAL -->
+<div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-map-marker-alt me-2"></i>Thông tin giao hàng</h5>
+                <button type="button" class="btn-logout" data-bs-dismiss="modal" style="color:rgba(255,255,255,.7);font-size:1.1rem"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-4">
+                <div class="mb-3">
+                    <label class="form-label">Địa chỉ nhận hàng</label>
+                    <textarea class="form-control" id="address" rows="2" placeholder="Số nhà, đường, quận/huyện..." required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú cho tài xế</label>
+                    <input type="text" class="form-control" id="note" placeholder="Ví dụ: Lấy thêm ớt, gõ cổng A...">
+                </div>
+                <button id="confirmOrderBtn" class="btn-checkout" style="border-radius:10px">Hoàn tất đặt hàng ✓</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap" style="display:none"></div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container text-center">
+        <div class="footer-brand mb-2">🍜 FoodHub</div>
+        <p style="font-size:.82rem; margin-bottom:.6rem">Tinh hoa ẩm thực Việt — Hương vị đậm đà, giao hàng tận tâm</p>
+        <div class="footer-links mb-3">
+            <a href="#">Giới thiệu</a>
+            <a href="#">Liên hệ</a>
+            <a href="#">Chính sách</a>
+            <a href="#">Tuyển dụng</a>
+        </div>
+        <p style="font-size:.75rem">© 2026 FoodHub. Toàn bộ quyền được bảo lưu.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ══════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════
+const dishes = [
+    // PHỞ & BÚN
+    { id: 1,  cat: 'pho-bun', name: "Phở bò đặc biệt",      price: 65000, desc: "Phở bò Hà Nội chuẩn vị — nước dùng hầm 12 tiếng, thịt mềm thơm",  img: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80", rating: 4.9, badge: "Bán chạy" },
+    { id: 2,  cat: 'pho-bun', name: "Bún chả Hà Nội",        price: 55000, desc: "Thịt nướng thơm lừng, nước mắm chua ngọt đặc trưng miền Bắc",       img: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=600&q=80", rating: 4.8, badge: null },
+    { id: 3,  cat: 'pho-bun', name: "Bún bò Huế",            price: 60000, desc: "Vị cay nồng đặc trưng, chả lụa, huyết và bắp bò thơm ngon",         img: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600&q=80", rating: 4.8, badge: "Đặc sản" },
+    { id: 4,  cat: 'pho-bun', name: "Mì Quảng tôm thịt",     price: 55000, desc: "Mì vàng đặc trưng xứ Quảng, tôm thịt giòn ngọt, đậu phộng rang",   img: "https://images.unsplash.com/photo-1552611052-33e04de081de?w=600&q=80", rating: 4.7, badge: null },
+    { id: 5,  cat: 'pho-bun', name: "Hủ tiếu Nam Vang",      price: 58000, desc: "Nước dùng trong vắt, thịt băm, tôm, trứng cút — chuẩn gốc Campuchia", img: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80", rating: 4.7, badge: null },
+    { id: 6,  cat: 'pho-bun', name: "Bún riêu cua",          price: 55000, desc: "Riêu cua đồng đậm đà, cà chua, đậu hũ chiên, mắm ruốc thơm",       img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600&q=80", rating: 4.6, badge: null },
+
+    // CƠM
+    { id: 7,  cat: 'com', name: "Cơm tấm sườn bì",           price: 45000, desc: "Cơm tấm Sài Gòn — sườn nướng, bì giòn, chả trứng, mắm chua ngọt",  img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80", rating: 4.9, badge: "Bán chạy" },
+    { id: 8,  cat: 'com', name: "Cơm gà Hội An",             price: 55000, desc: "Gà thả vườn luộc mềm, cơm thơm nấu nước luộc gà vàng óng",          img: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&q=80", rating: 4.8, badge: "Đặc sản" },
+    { id: 9,  cat: 'com', name: "Cơm chiên dương châu",      price: 48000, desc: "Cơm chiên thập cẩm — tôm, lạp xưởng, trứng, hành lá thơm lừng",    img: "https://images.unsplash.com/photo-1536304993881-ff86e0c9da5d?w=600&q=80", rating: 4.6, badge: null },
+    { id: 10, cat: 'com', name: "Cơm niêu cá kho tộ",        price: 52000, desc: "Cá lóc kho mặn ngọt đậm đà, cơm nóng hổi nấu niêu đất",              img: "https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=80", rating: 4.7, badge: null },
+
+    // BÁNH
+    { id: 11, cat: 'banh', name: "Bánh mì thịt nướng",       price: 35000, desc: "Bánh mì kẹp thịt xá xíu, pate, dưa leo, rau thơm giòn rụm",         img: "https://images.unsplash.com/photo-1600628421055-4d30de868b8f?w=600&q=80", rating: 4.9, badge: "Bán chạy" },
+    { id: 12, cat: 'banh', name: "Bánh cuốn nhân thịt",      price: 40000, desc: "Bánh cuốn mỏng dai, nhân thịt nấm, hành phi thơm — chấm nước mắm",  img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80", rating: 4.8, badge: null },
+    { id: 13, cat: 'banh', name: "Bánh xèo giòn",            price: 50000, desc: "Bánh xèo miền Nam giòn tan — tôm thịt giá đỗ, chấm nước mắm chua",  img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&q=80", rating: 4.7, badge: "Đặc sản" },
+    { id: 14, cat: 'banh', name: "Bánh canh cua",            price: 58000, desc: "Bánh canh sợi to, cua đồng béo ngậy, chả cá thơm lừng nước dùng",   img: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=600&q=80&sat=-20", rating: 4.8, badge: null },
+
+    // CUỐN & GỎI
+    { id: 15, cat: 'cuon-goi', name: "Gỏi cuốn tôm thịt",   price: 40000, desc: "Gỏi cuốn tươi, tôm hồng, rau thơm — kèm mắm nêm chấm đặc biệt",    img: "https://images.unsplash.com/photo-1562802378-063ec186a863?w=600&q=80", rating: 4.8, badge: null },
+    { id: 16, cat: 'cuon-goi', name: "Gỏi đu đủ khô bò",    price: 45000, desc: "Đu đủ xanh bào sợi, khô bò cay, đậu phộng rang, rau thơm tươi mát",  img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&q=80", rating: 4.7, badge: "Yêu thích" },
+    { id: 17, cat: 'cuon-goi', name: "Chả giò chiên",        price: 42000, desc: "Chả giò vàng giòn — nhân thịt tôm mộc nhĩ, chấm tương đỏ",           img: "https://images.unsplash.com/photo-1609501676725-7186f017a4b5?w=600&q=80", rating: 4.8, badge: "Bán chạy" },
+
+    // LẨU & NƯỚNG
+    { id: 18, cat: 'lau-nuong', name: "Lẩu thái hải sản",    price: 280000, desc: "Nước dùng chua cay đặc trưng Thái, tôm cua nghêu sò tươi ngon",    img: "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=600&q=80&hue=30", rating: 4.9, badge: "2-4 người" },
+    { id: 19, cat: 'lau-nuong', name: "Bò nướng lá lốt",     price: 85000, desc: "Thịt bò xay thơm, nướng lá lốt giòn — chấm tương đặc biệt",          img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80", rating: 4.7, badge: null },
+    { id: 20, cat: 'lau-nuong', name: "Sườn heo nướng than",  price: 90000, desc: "Sườn heo ướp sả mắm thơm lừng, nướng than hoa vàng đẹp",             img: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=600&q=80", rating: 4.7, badge: null },
+
+    // ĐỒ UỐNG
+    { id: 21, cat: 'do-uong', name: "Trà sữa trân châu",      price: 25000, desc: "Trà sữa nhà làm truyền thống, trân châu đen dẻo, thơm trà mạn",     img: "https://images.unsplash.com/photo-1558857563-c0c6ee4a5a1a?w=600&q=80", rating: 4.8, badge: "Bán chạy" },
+    { id: 22, cat: 'do-uong', name: "Cà phê sữa đá",          price: 22000, desc: "Cà phê phin chậm chắt, pha sữa đặc — chuẩn vị Việt truyền thống",   img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=600&q=80", rating: 4.9, badge: "Yêu thích" },
+    { id: 23, cat: 'do-uong', name: "Sinh tố xoài",            price: 28000, desc: "Xoài chín cây xay đặc, đá bào mịn, sữa tươi — ngọt tự nhiên",       img: "https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=600&q=80", rating: 4.7, badge: null },
+    { id: 24, cat: 'do-uong', name: "Nước mía ép",             price: 18000, desc: "Mía tươi ép lạnh, vắt chút chanh — giải nhiệt cực mát",               img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80", rating: 4.7, badge: null },
+
+    // TRÁNG MIỆNG
+    { id: 25, cat: 'trang-mieng', name: "Chè ba màu",          price: 22000, desc: "Đậu xanh, đậu đỏ, thạch, nước cốt dừa béo thơm — mát lạnh đá bào", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80", rating: 4.8, badge: "Yêu thích" },
+    { id: 26, cat: 'trang-mieng', name: "Bánh flan caramel",    price: 25000, desc: "Bánh flan mềm mịn, caramel đắng nhẹ — thơm vani quyến rũ",          img: "https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&q=80", rating: 4.7, badge: null },
+    { id: 27, cat: 'trang-mieng', name: "Xôi xoài nếp",        price: 35000, desc: "Xôi nếp dẻo thơm, xoài chín ngọt lịm, rắc mè rang thơm",            img: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=600&q=80", rating: 4.9, badge: "Đặc sản" },
+];
+
+const categories = {
+    'pho-bun':     { label: '🍜 Phở & Bún', color: '#C0392B' },
+    'com':         { label: '🍚 Cơm',       color: '#E8870A' },
+    'banh':        { label: '🥖 Bánh',      color: '#8B4513' },
+    'cuon-goi':    { label: '🥗 Cuốn & Gỏi', color: '#2E7D32' },
+    'lau-nuong':   { label: '🔥 Lẩu & Nướng', color: '#B71C1C' },
+    'do-uong':     { label: '🧋 Đồ uống',   color: '#1565C0' },
+    'trang-mieng': { label: '🍮 Tráng miệng', color: '#6A1B9A' },
+};
+
+let cart = [];
+let orders = JSON.parse(localStorage.getItem('myOrders')) || [];
+let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+// ══════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════
+function renderMenu(filterCat = 'all') {
+    const container = document.getElementById('menuContainer');
+    let html = '';
+    const cats = filterCat === 'all' ? Object.keys(categories) : [filterCat];
+    cats.forEach(cat => {
+        const items = dishes.filter(d => d.cat === cat);
+        if (!items.length) return;
+        html += `
+            <div class="mb-5">
+                <div class="section-header">
+                    <h2 class="section-title">${categories[cat].label}</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+                    ${items.map(dish => cardHTML(dish)).join('')}
+                </div>
+            </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function cardHTML(dish) {
+    return `
+    <div class="col">
+        <div class="dish-card h-100">
+            <div class="dish-img-wrap">
+                <img src="${dish.img}" alt="${dish.name}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80&fit=crop'">
+                ${dish.badge ? `<span class="dish-badge">${dish.badge}</span>` : ''}
+                <div class="dish-rating"><i class="fas fa-star"></i> ${dish.rating}</div>
+            </div>
+            <div class="dish-body">
+                <div class="dish-name">${dish.name}</div>
+                <div class="dish-desc">${dish.desc}</div>
+                <div class="dish-footer">
+                    <div class="dish-price">${dish.price.toLocaleString()}<small> đ</small></div>
+                    <button class="btn-add" onclick="addToCart(${dish.id})">
+                        <i class="fas fa-plus"></i> Thêm
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function filterCat(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMenu(cat);
+}
+
+// ══════════════════════════════════════════
+//  CART
+// ══════════════════════════════════════════
+function addToCart(id) {
+    const dish = dishes.find(d => d.id === id);
+    const item = cart.find(i => i.id === id);
+    if (item) item.quantity++;
+    else cart.push({ ...dish, quantity: 1 });
+    updateCart();
+    showToast(`Đã thêm <b>${dish.name}</b>`, 'success');
+}
+
+function changeQty(index, delta) {
+    cart[index].quantity += delta;
+    if (cart[index].quantity < 1) cart.splice(index, 1);
+    updateCart();
+}
+
+function updateCart() {
+    const count = cart.reduce((s, i) => s + i.quantity, 0);
+    document.getElementById('cartCount').textContent = count;
+    renderCartItems();
+}
+
+function renderCartItems() {
+    const container = document.getElementById('cartItems');
+    if (cart.length === 0) {
+        container.innerHTML = `<div class="empty-cart-msg"><i class="fas fa-shopping-basket"></i><p>Giỏ hàng đang trống</p><small>Hãy chọn món ngon nhé!</small></div>`;
+        document.getElementById('cartTotal').textContent = '0 đ';
+        return;
+    }
+    let total = 0;
+    container.innerHTML = cart.map((item, i) => {
+        total += item.price * item.quantity;
+        return `<div class="cart-item">
+            <img src="${item.img}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/56'">
+            <div style="flex:1">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">${item.price.toLocaleString()} đ</div>
+            </div>
+            <div class="qty-ctrl">
+                <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
+                <span class="qty-num">${item.quantity}</span>
+                <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
+            </div>
+        </div>`;
+    }).join('');
+    document.getElementById('cartTotal').textContent = total.toLocaleString() + ' đ';
+}
+
+function openCart() {
+    document.getElementById('cartSidebar').classList.add('show');
+    document.getElementById('cartOverlay').classList.add('show');
+}
+function closeCart() {
+    document.getElementById('cartSidebar').classList.remove('show');
+    document.getElementById('cartOverlay').classList.remove('show');
+}
+
+// ══════════════════════════════════════════
+//  CHECKOUT & TRACKING
+// ══════════════════════════════════════════
+document.getElementById('checkoutBtn').onclick = () => {
+    if (!currentUser) {
+        closeCart();
+        new bootstrap.Modal(document.getElementById('authModal')).show();
+        showToast("Vui lòng đăng nhập để đặt hàng", "warning");
+        return;
+    }
+    if (cart.length === 0) { showToast("Giỏ hàng đang trống", "danger"); return; }
+    closeCart();
+    new bootstrap.Modal(document.getElementById('orderModal')).show();
+};
+
+document.getElementById('confirmOrderBtn').onclick = () => {
+    const address = document.getElementById('address').value.trim();
+    if (!address) { showToast("Vui lòng nhập địa chỉ giao hàng", "danger"); return; }
+    const newOrder = {
+        id: 'FH' + Date.now().toString().slice(-6),
+        time: new Date().toLocaleString('vi-VN'),
+        items: [...cart],
+        total: cart.reduce((s, i) => s + i.price * i.quantity, 0),
+        address,
+        status: "Chờ xác nhận"
+    };
+    orders.unshift(newOrder);
+    localStorage.setItem('myOrders', JSON.stringify(orders));
+    simulateStatusUpdate(newOrder.id);
+    cart = [];
+    updateCart();
+    bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
+    showToast("🎉 Đặt hàng thành công! Đang chờ xác nhận.", "success");
+    setTimeout(() => openOrderTracking(), 800);
+};
+
+function openOrderTracking() {
+    if (!currentUser) { new bootstrap.Modal(document.getElementById('authModal')).show(); return; }
+    const container = document.getElementById('orderHistory');
+    if (orders.length === 0) {
+        container.innerHTML = '<div class="empty-cart-msg"><i class="fas fa-box-open"></i><p>Bạn chưa có đơn hàng nào.</p></div>';
+    } else {
+        container.innerHTML = orders.map(order => `
+            <div class="order-card card">
+                <div class="order-card-head">
+                    <span class="fw-bold" style="color:var(--amber)">#${order.id}</span>
+                    <span class="badge ${getStatusClass(order.status)} status-badge">${order.status}</span>
+                </div>
+                <div class="card-body pb-2">
+                    <div class="text-muted small mb-2"><i class="far fa-clock me-1"></i>${order.time}</div>
+                    <div class="text-muted small mb-2"><i class="fas fa-map-marker-alt me-1"></i>${order.address}</div>
+                    <div class="border-top pt-2">
+                        ${order.items.map(i => `<div class="small py-1 border-bottom">${i.name} <span class="text-muted">×${i.quantity}</span> <span class="float-end">${(i.price*i.quantity).toLocaleString()} đ</span></div>`).join('')}
+                    </div>
+                    <div class="text-end fw-bold mt-2" style="color:var(--amber)">Tổng: ${order.total.toLocaleString()} đ</div>
+                </div>
+            </div>`).join('');
+    }
+    new bootstrap.Modal(document.getElementById('trackingModal')).show();
+}
+
+function getStatusClass(s) {
+    return { 'Chờ xác nhận':'bg-warning text-dark', 'Đang chuẩn bị':'bg-info text-white', 'Đang giao':'bg-primary text-white', 'Đã giao':'bg-success text-white' }[s] || 'bg-secondary';
+}
+
+function simulateStatusUpdate(orderId) {
+    ['Đang chuẩn bị','Đang giao','Đã giao'].forEach((status, i) => {
+        setTimeout(() => {
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx > -1) {
+                orders[idx].status = status;
+                localStorage.setItem('myOrders', JSON.stringify(orders));
+                if (document.getElementById('trackingModal').classList.contains('show')) openOrderTracking();
+            }
+        }, (i + 1) * 10000);
+    });
+}
+
+// ══════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════
+document.getElementById('registerForm').onsubmit = (e) => {
+    e.preventDefault();
+    const user = { name: document.getElementById('regName').value, email: document.getElementById('regEmail').value, phone: document.getElementById('regPhone').value, pass: document.getElementById('regPass').value };
+    localStorage.setItem('userAccount', JSON.stringify(user));
+    showToast("Đăng ký thành công! Hãy đăng nhập.", "success");
+    bootstrap.Tab.getInstance(document.querySelector('button[data-bs-target="#tab-login"]')).show();
+};
+
+document.getElementById('loginForm').onsubmit = (e) => {
+    e.preventDefault();
+    const id = document.getElementById('loginId').value;
+    const pass = document.getElementById('loginPass').value;
+    const saved = JSON.parse(localStorage.getItem('userAccount'));
+    if (saved && (id === saved.email || id === saved.phone) && pass === saved.pass) {
+        currentUser = saved;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateAuthUI();
+        bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+        showToast("Chào mừng quay trở lại, <b>" + currentUser.name + "</b>!", "success");
+    } else {
+        showToast("Thông tin đăng nhập không chính xác", "danger");
+    }
+};
+
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    updateAuthUI();
+    showToast("Đã đăng xuất", "success");
+}
+
+function updateAuthUI() {
+    if (currentUser) {
+        document.getElementById('loginBtn').classList.add('hidden');
+        document.getElementById('userInfo').classList.remove('hidden');
+        document.getElementById('userName').textContent = currentUser.name;
+    } else {
+        document.getElementById('loginBtn').classList.remove('hidden');
+        document.getElementById('userInfo').classList.add('hidden');
+    }
+}
+
+// ══════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type = 'success') {
+    const wrap = document.getElementById('toastWrap');
+    const icons = { success: 'fa-check-circle', danger: 'fa-times-circle', warning: 'fa-exclamation-circle' };
+    const el = document.createElement('div');
+    el.className = `toast-msg ${type}`;
+    el.innerHTML = `<i class="fas ${icons[type] || 'fa-info-circle'}"></i> <span>${msg}</span>`;
+    wrap.innerHTML = '';
+    wrap.appendChild(el);
+    wrap.style.display = 'flex';
+    setTimeout(() => { wrap.style.display = 'none'; }, 3200);
+}
+
+// ══════════════════════════════════════════
+//  EVENTS & INIT
+// ══════════════════════════════════════════
+document.getElementById('cartBtn').onclick = openCart;
+
+window.onload = () => {
+    renderMenu();
+    updateAuthUI();
+    updateCart();
+};
+</script>
+</body>
+</html>
